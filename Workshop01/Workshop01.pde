@@ -46,8 +46,8 @@ void setup() {
   gsAVG = createGraphics(h_w,h_w);
   gsLuma = createGraphics(h_w, h_w);
   
-  rgbHist = createGraphics(h_w*3, h_w);
-  rgbImg = createGraphics(h_w*3, h_w);
+  rgbHist = createGraphics(h_w, h_w/2);
+  rgbImg = createGraphics(h_w, h_w/2);
   
   
   edgeKernel = createGraphics(h_w, h_w);
@@ -76,6 +76,7 @@ void draw() {
     break;
     case 3:
       image(rgbHist, h_w+50, 0);
+      image(rgbImg, h_w+50, h_w/2);
     break;
     case 4:
       image(edgeKernel, h_w+50, 0);
@@ -111,53 +112,47 @@ void draw() {
   fill(255);
 }
 
-void gray_scale(){
-  PImage customAVG = ogImage.copy();
-  PImage customLuma = ogImage.copy();
+PImage gray(PImage picture,String mode){
+  PImage custom = picture.copy();
   
-  ogImage.loadPixels();
-  for(int i=0;i<ogImage.width*ogImage.height;i++){
-      float redVal = red(ogImage.pixels[i]);
-      float greenVal = green(ogImage.pixels[i]);
-      float blueVal = blue(ogImage.pixels[i]);
-      customAVG.pixels[i] = color((redVal+greenVal+blueVal)/3);
-      customLuma.pixels[i] = color(redVal*0.299+greenVal*0.587+blueVal*0.114);
+  picture.loadPixels();
+  for(int i=0;i<picture.width*picture.height;i++){
+      float redVal = red(picture.pixels[i]);
+      float greenVal = green(picture.pixels[i]);
+      float blueVal = blue(picture.pixels[i]);
+      if(mode.equals("avg")){
+        custom.pixels[i] = color((redVal+greenVal+blueVal)/3);
+      }
+      else if(mode.equals("luma")){
+        custom.pixels[i] = color(redVal*0.299+greenVal*0.587+blueVal*0.114);
+      }
   }
-  customAVG.updatePixels();
-  customLuma.updatePixels();
-  
+  custom.updatePixels();
+  return custom;
+}
+
+void gray_scale(){  
   gsAVG.beginDraw();
-  gsAVG.image(customAVG, 0, 0);
+  gsAVG.image(gray(ogImage,"avg"), 0, 0);
   gsAVG.endDraw();
   
   gsLuma.beginDraw();
-  gsLuma.image(customLuma, 0, 0);
+  gsLuma.image(gray(ogImage,"luma"), 0, 0);
   gsLuma.endDraw();
 }
 
 void rgbHistogram(){
-  int[] histR = new int[256];
-  int[] histG = new int[256];
-  int[] histB = new int[256];
-  int transparency = 70;
   
-  PImage customR = ogImage.copy();
-  PImage customG = ogImage.copy();
-  PImage customB = ogImage.copy();
   
-  ogImage.loadPixels();
-  for(int i=0;i<ogImage.width*ogImage.height;i++){
-    color localP = ogImage.pixels[i];
-    histR[int(red(localP))]++; 
-    histG[int(green(localP))]++; 
-    histB[int(blue(localP))]++; 
-    customR.pixels[i] = color(red(localP), 0, 0);
-    customG.pixels[i] = color(0, green(localP), 0);
-    customB.pixels[i] = color(0, 0, blue(localP));
+  int[] hist = new int[256];
+  
+  PImage gray_image = gray(ogImage,"luma");
+  
+  gray_image.loadPixels();
+  for(int i=0;i<gray_image.width*gray_image.height;i++){
+    color localP = gray_image.pixels[i];
+    hist[int(red(localP))]++; 
   }
-  customR.updatePixels();
-  customG.updatePixels();
-  customB.updatePixels();
   
   rgbHist.beginDraw();
   rgbHist.background(220,220,220);
