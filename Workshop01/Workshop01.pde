@@ -4,9 +4,12 @@ PGraphics gsAVG, gsLuma;
 PGraphics rgbHist,rgbImg;
 PGraphics edgeKernel,sharpenKernel,gaussianKernel,embossKernel;
 
+
 int h_w = 500;
-int option = 1;
-                    
+int option = 1;      
+int range_a = 0;
+int range_b = h_w;
+
 float[][] edge = {{ 0, 1, 0}, 
                   { 1,-4, 1}, 
                   { 0, 1, 0}};
@@ -57,7 +60,6 @@ void setup() {
   
   
   gray_scale();
-  rgbHistogram();
   kernels();
   
 }
@@ -75,6 +77,7 @@ void draw() {
       image(gsLuma, h_w+50, 0);
     break;
     case 3:
+      rgbHistogram();
       image(rgbHist, h_w+50, 0);
       image(rgbImg, h_w+50, h_w/2);
     break;
@@ -143,10 +146,13 @@ void gray_scale(){
 
 void rgbHistogram(){
   
+  int start = min(range_a,range_b);
+  int end = max(range_a,range_b);
   
   int[] hist = new int[256];
   
   PImage gray_image = gray(ogImage,"luma");
+  PImage highlight = gray(ogImage,"luma");
   
   gray_image.loadPixels();
   for(int i=0;i<gray_image.width*gray_image.height;i++){
@@ -155,29 +161,29 @@ void rgbHistogram(){
   }
   
   rgbHist.beginDraw();
-  rgbHist.background(220,220,220);
-  int histMaxR = max(histR);
-  int histMaxG = max(histG);
-  int histMaxB = max(histB);
+  rgbHist.background(100,100,100);
+  int histMax = max(hist);
   for (int i = 0; i < rgbHist.width; i++) {
     int which = int(map(i, 0, rgbHist.width, 0, 255));
-    int y_r = int(map(histR[which], 0, histMaxR, rgbHist.height, 0));
-    int y_g = int(map(histG[which], 0, histMaxG, rgbHist.height, 0));
-    int y_b = int(map(histB[which], 0, histMaxB, rgbHist.height, 0));
-    rgbHist.stroke(255,0,0,transparency);
+    int y_r = int(map(hist[which], 0, histMax, rgbHist.height, 0));
+    rgbHist.stroke(200,200,200);
     rgbHist.line(i, rgbHist.height, i, y_r);
-    rgbHist.stroke(0,255,0,transparency+50);
-    rgbHist.line(i, rgbHist.height, i, y_g);
-    rgbHist.stroke(0,0,255,transparency);
-    rgbHist.line(i, rgbHist.height, i, y_b);
   }
-  rgbHist.tint(255, 126);
   rgbHist.endDraw();
   
+  //gray_image.loadPixels();
+  //for(int j=0;i<gray_image.width*gray_image.height;i++){
+  //  color localP = gray_image.pixels[i];
+  //  hist[int(red(localP))]++; 
+  //}
+  
+  gray_image.resize(h_w/2,h_w/2);
+  
+  
+  
+  
   rgbImg.beginDraw();
-  rgbImg.image(customR, 0, 0);
-  rgbImg.image(customG, h_w, 0);
-  rgbImg.image(customB, h_w*2, 0);
+  rgbImg.image(gray_image, 0, 0);
   rgbImg.endDraw();
   
 }
@@ -235,7 +241,6 @@ PImage kernel_3x3(PImage picture,float[][] kernel){
 void mouseClicked() {
   if (mouseX > h_w && mouseX < h_w+50) {
     if(mouseY<h_w){
-      println(mouseY);
       option = mouseY/50+1;
     }
   }
