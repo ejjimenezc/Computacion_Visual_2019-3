@@ -1,10 +1,11 @@
 PImage ogImage;
-PGraphics ogImg;
+PGraphics ogImg, menu;
 PGraphics gsAVG, gsLuma;
 PGraphics rgbHist,rgbImg;
 PGraphics edgeKernel,sharpenKernel,gaussianKernel,embossKernel;
 
-int h_w = 300;
+int h_w = 500;
+int option = 1;
                     
 float[][] edge = {{ 0, 1, 0}, 
                   { 1,-4, 1}, 
@@ -23,19 +24,25 @@ float[][] emboss = {{-2,-1, 0},
                    {-1, 0, 1}, 
                    { 0, 1, 2}};
                      
-                     
-
 void setup() {
-  size(1600, 900);
+  
+  size(1050, 500);  //Background Size
   background(0);
   ogImg = createGraphics(h_w, h_w);
-  ogImage = loadImage("Scifi.jpg");
+  ogImage = loadImage("Scifi.jpg");  //Load original image
   //ogImage = loadImage("https" + "://processing.org/tutorials/color/imgs/hsb.png");
-  ogImage.resize(h_w, h_w);
+  ogImage.resize(h_w, h_w); //Resize original image
   ogImg.beginDraw();
-  ogImg.image(ogImage, 0, 0);
+  ogImg.image(ogImage, 0, 0);  //Draw original image on his own canvas
   ogImg.endDraw();
 
+  
+  menu = createGraphics(50,h_w);
+  menu.beginDraw();
+  menu.background(200,200,100);
+  menu.endDraw();
+  
+  
   gsAVG = createGraphics(h_w,h_w);
   gsLuma = createGraphics(h_w, h_w);
   
@@ -52,23 +59,56 @@ void setup() {
   gray_scale();
   rgbHistogram();
   kernels();
+  
 }
 
 void draw() {
 
-  image(ogImg, h_w, 0);
-  
-  image(gsAVG, 0, 0);
-  image(gsLuma, h_w*2, 0);
-  
-  image(rgbHist, 0, h_w);
-  image(rgbImg, 0, h_w*2);
-  
-  image(edgeKernel, h_w*3+100, 0);
-  image(sharpenKernel, h_w*3+100, h_w);
-  image(gaussianKernel, h_w*3+100, h_w*2);
-  image(embossKernel, h_w*4+100,0);
-  
+  clear();
+  image(ogImg, 0, 0);
+  image(menu, h_w, 0);
+  switch(option){
+    case 1:
+      image(gsAVG, h_w+50, 0);
+    break;
+    case 2:
+      image(gsLuma, h_w+50, 0);
+    break;
+    case 3:
+      image(rgbHist, h_w+50, 0);
+    break;
+    case 4:
+      image(edgeKernel, h_w+50, 0);
+    break;
+    case 5:
+      image(sharpenKernel, h_w+50, 0);
+    break;
+    case 6:
+      image(gaussianKernel, h_w+50, 0);
+    break;
+    case 7:
+      image(embossKernel, h_w+50, 0);
+    break;
+    case 8:
+    break;
+    case 9:
+    break;
+    case 10:
+      //video
+    break;
+    default:
+    
+    break;
+    
+
+  };
+
+  for(int i = 0; i<20;i++){
+    square(h_w,50*i,50);
+  }
+  fill(255,255,0);
+  square(h_w,50*(option-1),50);
+  fill(255);
 }
 
 void gray_scale(){
@@ -195,6 +235,15 @@ PImage kernel_3x3(PImage picture,float[][] kernel){
   custom.updatePixels();
   
   return custom;
+}
+
+void mouseClicked() {
+  if (mouseX > h_w && mouseX < h_w+50) {
+    if(mouseY<h_w){
+      println(mouseY);
+      option = mouseY/50+1;
+    }
+  }
 }
 
 //https://forum.processing.org/two/discussion/25076/convolution-matrix-to-an-rgb-image
