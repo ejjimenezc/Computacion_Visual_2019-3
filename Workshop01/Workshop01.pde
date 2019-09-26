@@ -7,8 +7,8 @@ PGraphics edgeKernel,sharpenKernel,gaussianKernel,embossKernel;
 
 int h_w = 500;
 int option = 1;      
-int range_a = 0;
-int range_b = h_w;
+int start = 0;
+int end = h_w;
 
 float[][] edge = {{ 0, 1, 0}, 
                   { 1,-4, 1}, 
@@ -76,7 +76,7 @@ void draw() {
     case 2:
       image(gsLuma, h_w+50, 0);
     break;
-    case 3:
+    case 3:   
       rgbHistogram();
       image(rgbHist, h_w+50, 0);
       image(rgbImg, h_w+50, h_w/2);
@@ -145,45 +145,49 @@ void gray_scale(){
 }
 
 void rgbHistogram(){
-  
-  int start = min(range_a,range_b);
-  int end = max(range_a,range_b);
-  
+
   int[] hist = new int[256];
   
   PImage gray_image = gray(ogImage,"luma");
   PImage highlight = gray(ogImage,"luma");
   
+  int x1 = int(map(start, 0, rgbHist.width, 0, 255));
+  int x2 = int(map(end, 0, rgbHist.width, 0, 255));
+    
   gray_image.loadPixels();
   for(int i=0;i<gray_image.width*gray_image.height;i++){
-    color localP = gray_image.pixels[i];
-    hist[int(red(localP))]++; 
+    int localValue = int(red(gray_image.pixels[i]));
+    hist[localValue]++; 
+    if(localValue<x1 || localValue > x2){
+      highlight.pixels[i]=color(0);
+    }
   }
+  highlight.updatePixels();
   
   rgbHist.beginDraw();
-  rgbHist.background(100,100,100);
+  rgbHist.background(150);
   int histMax = max(hist);
   for (int i = 0; i < rgbHist.width; i++) {
     int which = int(map(i, 0, rgbHist.width, 0, 255));
-    int y_r = int(map(hist[which], 0, histMax, rgbHist.height, 0));
-    rgbHist.stroke(200,200,200);
-    rgbHist.line(i, rgbHist.height, i, y_r);
+    int y = int(map(hist[which], 0, histMax, rgbHist.height, 0));
+    if(i>start && i<end){rgbHist.stroke(255);}else{rgbHist.stroke(80);}
+    rgbHist.line(i, rgbHist.height, i, y);   
   }
+  rgbHist.strokeWeight(3);
+  rgbHist.stroke(0,255,0);
+  rgbHist.line(start, rgbHist.height, start, 0);
+  rgbHist.stroke(255,255,0);
+  rgbHist.line(end, rgbHist.height, end, 0);
   rgbHist.endDraw();
   
-  //gray_image.loadPixels();
-  //for(int j=0;i<gray_image.width*gray_image.height;i++){
-  //  color localP = gray_image.pixels[i];
-  //  hist[int(red(localP))]++; 
-  //}
+
   
   gray_image.resize(h_w/2,h_w/2);
-  
-  
-  
-  
+  highlight.resize(h_w/2,h_w/2);
+
   rgbImg.beginDraw();
   rgbImg.image(gray_image, 0, 0);
+  rgbImg.image(highlight, h_w/2, 0);
   rgbImg.endDraw();
   
 }
@@ -242,6 +246,16 @@ void mouseClicked() {
   if (mouseX > h_w && mouseX < h_w+50) {
     if(mouseY<h_w){
       option = mouseY/50+1;
+    }
+  }
+}
+
+void mousePressed() {
+  if(mouseX > h_w+50 && mouseX < h_w*2+50 && mouseY > 0 && mouseY < h_w/2 && option==3){
+    if (mouseButton == LEFT && mouseX-h_w-50<end) {
+      start = mouseX-h_w-50;
+    } else if (mouseButton == RIGHT && mouseX-h_w-5>start) {
+      end = mouseX-h_w-50;
     }
   }
 }
