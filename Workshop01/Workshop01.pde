@@ -3,7 +3,7 @@ PGraphics ogImg, menu;
 PGraphics gsAVG, gsLuma;
 PGraphics rgbHist,rgbImg;
 PGraphics edgeKernel,sharpenKernel,gaussianKernel,embossKernel;
-
+PGraphics video;
 
 int h_w = 500;
 int option = 1;      
@@ -59,6 +59,9 @@ void setup() {
   embossKernel = createGraphics(h_w, h_w);
   
   
+  video = createGraphics(h_w, h_w);
+  
+  
   gray_scale();
   kernels();
   
@@ -98,7 +101,7 @@ void draw() {
     case 9:
     break;
     case 10:
-      //video
+      image(video, h_w+50, 0);
     break;
     default:
     
@@ -225,6 +228,36 @@ PImage kernel_3x3(PImage picture,float[][] kernel){
       
       for(int ky = -1; ky <= 1; ky++){
         for(int kx = -1; kx <= 1; kx++){
+          int pos = ( y+ky )*ogImage.width + ( x+kx );
+          float valR = red(ogImage.pixels[pos]);
+          float valG = green(ogImage.pixels[pos]);
+          float valB = blue(ogImage.pixels[pos]);
+          sumR += kernel [ky+1][kx+1] * valR;
+          sumG += kernel [ky+1][kx+1] * valG;
+          sumB += kernel [ky+1][kx+1] * valB;
+        }
+      }
+      custom.pixels[y*ogImage.width + x] = color(sumR, sumG, sumB);
+    }
+  }
+  custom.updatePixels();
+  
+  return custom;
+}
+
+PImage kernel_5x5(PImage picture,float[][] kernel){
+
+  PImage custom = picture.copy();
+  
+  ogImage.loadPixels();
+  for (int y = 1; y < ogImage.height-1; y++) { 
+    for (int x = 1; x < ogImage.width-1; x++) { 
+      float sumR = 0;
+      float sumG = 0;
+      float sumB = 0;
+      
+      for(int ky = -2; ky <= 2; ky++){
+        for(int kx = -2; kx <= 2; kx++){
           int pos = ( y+ky )*ogImage.width + ( x+kx );
           float valR = red(ogImage.pixels[pos]);
           float valG = green(ogImage.pixels[pos]);
