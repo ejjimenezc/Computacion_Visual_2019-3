@@ -2,7 +2,7 @@ PImage ogImage;
 PGraphics ogImg, menu;
 PGraphics gsAVG, gsLuma;
 PGraphics rgbHist,rgbImg;
-PGraphics edgeKernel,sharpenKernel,gaussianKernel,embossKernel;
+PGraphics edgeK,sharpenK,gaussian3K,embossK,gaussian5K,unsharpK;
 PGraphics video;
 
 int h_w = 500;
@@ -10,29 +10,44 @@ int option = 1;
 int start = 0;
 int end = h_w;
 
-float[][] edge = {{ 0, 1, 0}, 
-                  { 1,-4, 1}, 
-                  { 0, 1, 0}};
+float[][] edgeDetection = {{-1,-1,-1}, 
+                           {-1, 8,-1}, 
+                           {-1,-1,-1}};
                   
 float[][] sharpen = {{ 0,-1, 0}, 
                      {-1, 5,-1}, 
                      { 0,-1, 0}};
                      
-float[][] gaussian_blur = {{ 0.0625,0.125,0.0625}, 
-                           { 0.1250,0.250,0.1250}, 
-                           { 0.0625,0.125,0.0625}};
+float[][] gaussianBlur3x3 = {{ 1/16.,2/16.,2/16.}, 
+                             { 2/16.,4/16.,2/16.}, 
+                             { 1/16.,2/16.,1/16.}};
+                             
+float[][] emboss = {{-3,-2,-1, 0}, 
+                    {-2,-1, 0, 1}, 
+                    {-1, 0, 1, 2}, 
+                    { 0, 1, 2, 3}};
+                   
+float[][] gaussianBlur5x5 = {{ 1/256., 4/256., 6/256., 4/256., 1/256.}, 
+                             { 4/256.,16/256.,24/256.,16/256., 4/256.}, 
+                             { 6/256.,24/256.,36/256.,24/256., 6/256.}, 
+                             { 4/256.,16/256.,24/256.,16/256., 4/256.}, 
+                             { 1/256., 4/256., 6/256., 4/256., 1/256.}};
                            
+
+float[][] unsharpMasking = {{ -1/256., -4/256., -6/256., -4/256., -1/256.}, 
+                            { -4/256.,-16/256.,-24/256.,-16/256., -4/256.}, 
+                            { -6/256.,-24/256.,476/256.,-24/256., -6/256.}, 
+                            { -4/256.,-16/256.,-24/256.,-16/256., -4/256.}, 
+                            { -1/256., -4/256., -6/256., -4/256., -1/256.}};
                            
-float[][] emboss = {{-2,-1, 0}, 
-                   {-1, 0, 1}, 
-                   { 0, 1, 2}};
                      
 void setup() {
   
+ 
   size(1050, 500);  //Background Size
   background(0);
   ogImg = createGraphics(h_w, h_w);
-  ogImage = loadImage("Scifi.jpg");  //Load original image
+  ogImage = loadImage("flowers.jpg");  //Load original image
   //ogImage = loadImage("https" + "://processing.org/tutorials/color/imgs/hsb.png");
   ogImage.resize(h_w, h_w); //Resize original image
   ogImg.beginDraw();
@@ -53,18 +68,17 @@ void setup() {
   rgbImg = createGraphics(h_w, h_w/2);
   
   
-  edgeKernel = createGraphics(h_w, h_w);
-  sharpenKernel = createGraphics(h_w, h_w);
-  gaussianKernel = createGraphics(h_w, h_w);
-  embossKernel = createGraphics(h_w, h_w);
-  
+  edgeK = createGraphics(h_w, h_w);
+  sharpenK = createGraphics(h_w, h_w);
+  gaussian3K = createGraphics(h_w, h_w);
+  embossK = createGraphics(h_w, h_w);
+  gaussian5K = createGraphics(h_w, h_w);
+  unsharpK = createGraphics(h_w, h_w);
   
   video = createGraphics(h_w, h_w);
   
-  
   gray_scale();
   kernels();
-  
 }
 
 void draw() {
@@ -85,20 +99,22 @@ void draw() {
       image(rgbImg, h_w+50, h_w/2);
     break;
     case 4:
-      image(edgeKernel, h_w+50, 0);
+      image(edgeK, h_w+50, 0);
     break;
     case 5:
-      image(sharpenKernel, h_w+50, 0);
+      image(sharpenK, h_w+50, 0);
     break;
     case 6:
-      image(gaussianKernel, h_w+50, 0);
+      image(gaussian3K, h_w+50, 0);
     break;
     case 7:
-      image(embossKernel, h_w+50, 0);
+      image(embossK, h_w+50, 0);
     break;
     case 8:
+      image(gaussian5K, h_w+50, 0);
     break;
     case 9:
+      image(unsharpK, h_w+50, 0);
     break;
     case 10:
       image(video, h_w+50, 0);
@@ -196,22 +212,29 @@ void rgbHistogram(){
 }
 
 void kernels(){
-  edgeKernel.beginDraw();
-  edgeKernel.image(kernel_3x3(ogImage,edge), 0, 0);
-  edgeKernel.endDraw();
+  edgeK.beginDraw();
+  edgeK.image(kernel_3x3(ogImage,edgeDetection), 0, 0);
+  edgeK.endDraw();
   
-  sharpenKernel.beginDraw();
-  sharpenKernel.image(kernel_3x3(ogImage,sharpen), 0, 0);
-  sharpenKernel.endDraw();
+  sharpenK.beginDraw();
+  sharpenK.image(kernel_3x3(ogImage,sharpen), 0, 0);
+  sharpenK.endDraw();
   
+  gaussian3K.beginDraw();
+  gaussian3K.image(kernel_3x3(ogImage,gaussianBlur3x3), 0, 0);
+  gaussian3K.endDraw();
   
-  gaussianKernel.beginDraw();
-  gaussianKernel.image(kernel_3x3(ogImage,gaussian_blur), 0, 0);
-  gaussianKernel.endDraw();
+  embossK.beginDraw();
+  embossK.image(kernel_4x4(ogImage,emboss), 0, 0);
+  embossK.endDraw();
   
-  embossKernel.beginDraw();
-  embossKernel.image(kernel_3x3(ogImage,emboss), 0, 0);
-  embossKernel.endDraw();
+  gaussian5K.beginDraw();
+  gaussian5K.image(kernel_5x5(ogImage,gaussianBlur5x5), 0, 0);
+  gaussian5K.endDraw();
+  
+  unsharpK.beginDraw();
+  unsharpK.image(kernel_5x5(ogImage,unsharpMasking), 0, 0);
+  unsharpK.endDraw();
 }
 
 
@@ -245,13 +268,43 @@ PImage kernel_3x3(PImage picture,float[][] kernel){
   return custom;
 }
 
+PImage kernel_4x4(PImage picture,float[][] kernel){
+
+  PImage custom = picture.copy();
+  
+  ogImage.loadPixels();
+  for (int y = 1; y < ogImage.height-2; y++) { 
+    for (int x = 1; x < ogImage.width-2; x++) { 
+      float sumR = 0;
+      float sumG = 0;
+      float sumB = 0;
+      
+      for(int ky = -1; ky <= 2; ky++){
+        for(int kx = -1; kx <= 2; kx++){
+          int pos = ( y+ky )*ogImage.width + ( x+kx );
+          float valR = red(ogImage.pixels[pos]);
+          float valG = green(ogImage.pixels[pos]);
+          float valB = blue(ogImage.pixels[pos]);
+          sumR += kernel [ky+1][kx+1] * valR;
+          sumG += kernel [ky+1][kx+1] * valG;
+          sumB += kernel [ky+1][kx+1] * valB;
+        }
+      }
+      custom.pixels[y*ogImage.width + x] = color(sumR, sumG, sumB);
+    }
+  }
+  custom.updatePixels();
+  
+  return custom;
+}
+
 PImage kernel_5x5(PImage picture,float[][] kernel){
 
   PImage custom = picture.copy();
   
   ogImage.loadPixels();
-  for (int y = 1; y < ogImage.height-1; y++) { 
-    for (int x = 1; x < ogImage.width-1; x++) { 
+  for (int y = 2; y < ogImage.height-2; y++) { 
+    for (int x = 2; x < ogImage.width-2; x++) { 
       float sumR = 0;
       float sumG = 0;
       float sumB = 0;
@@ -262,9 +315,9 @@ PImage kernel_5x5(PImage picture,float[][] kernel){
           float valR = red(ogImage.pixels[pos]);
           float valG = green(ogImage.pixels[pos]);
           float valB = blue(ogImage.pixels[pos]);
-          sumR += kernel [ky+1][kx+1] * valR;
-          sumG += kernel [ky+1][kx+1] * valG;
-          sumB += kernel [ky+1][kx+1] * valB;
+          sumR += kernel [ky+2][kx+2] * valR;
+          sumG += kernel [ky+2][kx+2] * valG;
+          sumB += kernel [ky+2][kx+2] * valB;
         }
       }
       custom.pixels[y*ogImage.width + x] = color(sumR, sumG, sumB);
