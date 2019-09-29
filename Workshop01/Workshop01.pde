@@ -18,6 +18,8 @@ int end = h_w;
 int buttons = 100;
 int value=0;
 
+boolean update = true;
+
 String[] menus = {"AVG","Luma","Histogram","Edge 3x3","Sharpen 3x3","Gaussian 3x3","Emboss 4x4","Gaussian 5x5","Unsharpen 5x5","Video"};
 
 float[][] edgeDetection = {{-1,-1,-1}, 
@@ -55,7 +57,9 @@ void setup() {
   
  
   size(1100, 500);  //Background Size
-  background(0);
+  background(255);
+  textAlign(CENTER);
+  
   ogImg = createGraphics(h_w, h_w);
   ogImage = loadImage("image.jpg");  //Load original image
   //ogImage = loadImage("https" + "://processing.org/tutorials/color/imgs/hsb.png");
@@ -67,7 +71,7 @@ void setup() {
   
   menu = createGraphics(buttons,h_w);
   menu.beginDraw();
-  menu.background(200,200,100);
+  menu.background(255);
   menu.endDraw();
   
   
@@ -93,15 +97,32 @@ void setup() {
   //Video
   myMovie = new Movie(this, "cuphead (SinVolumen).mp4");
   myMovie.loop();
+  
+  image(menu, h_w, 0);
 }
 
 void draw() {
-
-  clear();
   
   myMovie.pause();
-  image(ogImg, 0, 0);
-  image(menu, h_w, 0);
+  
+  if(update){
+    
+    myMovie.stop();
+    image(ogImg, 0, 0);
+    for(int i = 0; i<10;i++){
+      if(option-1==i){
+        fill(150,150,255);
+      }else{
+        fill(255);
+      }
+      square(h_w,buttons/2*i,buttons);
+      textSize(12);
+      fill(0);
+      text(menus[i],h_w+buttons/2,(buttons/2*(i+1))-22);
+    }
+    update = false;
+  }
+  
   switch(option){
     case 1:
       image(gsAVG, h_w+buttons, 0);
@@ -142,19 +163,6 @@ void draw() {
     
 
   };
-
-  textAlign(CENTER);
-  for(int i = 0; i<10;i++){
-    if(option-1==i){
-      fill(150,150,0);
-    }else{
-      fill(255);
-    }
-    square(h_w,buttons/2*i,buttons);
-    textSize(12);
-    fill(0);
-    text(menus[i],h_w+buttons/2,(buttons/2*(i+1))-22);
-  }
 }
 
 PImage gray(PImage picture,String mode){
@@ -373,9 +381,12 @@ void movieEvent(Movie m) {
     video.image(kernel_5x5(m,gaussianBlur5x5), 0, 0, 525, 500);
   }  else if(value==8){
     video.image(kernel_5x5(m,unsharpMasking), 0, 0, 525, 500);
-  } 
+  }
+  
+  video.textSize(30);
+  video.text(round(frameRate),10,35);
   video.endDraw();
-  println(frameRate);
+  
 }
 
 void keyPressed() {
@@ -404,6 +415,7 @@ void mouseClicked() {
   if (mouseX > h_w && mouseX < h_w+buttons) {
     if(mouseY<h_w){
       option = mouseY/50+1;
+      update = true;
     }
   }
 }
