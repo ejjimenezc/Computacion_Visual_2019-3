@@ -31,11 +31,19 @@ Completar la tabla:
 
 | Integrante | github nick |
 |------------|-------------|
-|Edwin Javier Jimenez Casares            |  ejjimenezc           |
+|Edwin Javier Jimenez Casares               |  ejjimenezc           |
+|Juan Sebastián Alcina Rodríguez            |  jsalcinar            |
 
 ## Discusión
 
-(describa brevemente las actividades realizadas y los resultados obtenidos)
+### Implementación para video
+
+Se aplicaron todas las operaciones a cada uno de los fotogramas obtenidos con el video utilizado. En esta tarea se observó que los cuadros por segundo se reducen considerablemente con cada operación. Al aplicar las escalas de grises (AVG y Luma) se reduce un poco y dependiendo del computador en el que se ejecute el programa se reduce la velocidad de reproducción. 
+En cuanto a la aplicación de las mascaras de convolución se obtuvieron diferentes resultados dependiendo del tamaño de la matriz utilizada. En el caso de la matriz 3x3 el efecto ‘Edge Detection’ es el que más reduce los cuadros por segundo, seguido por ‘Gaussian Blur’ y por último ‘Sharpen’. Consideramos que esto se debe a que al ejecutar el análisis por bordes se modifican los colores de la imagen requiriendo un alto nivel de procesamiento para cada fotograma del video. En el caso de la matriz 4x4 se reducen considerablemente los cuadros por segundo, de forma similar al efecto ‘Edge Detection’. Por último, para el caso de la matriz 5x5 la reducción es mayor que al utilizar la matriz 3x3, esto se debe a que el efecto es mucho más definido y hacerlo sobre una secuencia de imágenes consume muchos recursos del computador.
+
+### Bibliografía
+
+https://forum.processing.org/two/discussion/25076/convolution-matrix-to-an-rgb-image
 
 ## Entrega
 
