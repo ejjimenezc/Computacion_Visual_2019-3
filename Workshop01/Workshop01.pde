@@ -9,6 +9,7 @@ int h_w = 500;
 int option = 1;      
 int start = 0;
 int end = h_w;
+int buttons = 100;
 
 float[][] edgeDetection = {{-1,-1,-1}, 
                            {-1, 8,-1}, 
@@ -39,15 +40,16 @@ float[][] unsharpMasking = {{ -1/256., -4/256., -6/256., -4/256., -1/256.},
                             { -6/256.,-24/256.,476/256.,-24/256., -6/256.}, 
                             { -4/256.,-16/256.,-24/256.,-16/256., -4/256.}, 
                             { -1/256., -4/256., -6/256., -4/256., -1/256.}};
-                           
+                      
+String[] menus = {"AVG","Luma","Histogram","Edge 3x3","Sharpen 3x3","Gaussian 3x3","Emboss 4x4","Gaussian 5x5","Unsharpen 5x5","Video"};
                      
 void setup() {
   
  
-  size(1050, 500);  //Background Size
+  size(1100, 500);  //Background Size
   background(0);
   ogImg = createGraphics(h_w, h_w);
-  ogImage = loadImage("flowers.jpg");  //Load original image
+  ogImage = loadImage("image.jpg");  //Load original image
   //ogImage = loadImage("https" + "://processing.org/tutorials/color/imgs/hsb.png");
   ogImage.resize(h_w, h_w); //Resize original image
   ogImg.beginDraw();
@@ -55,7 +57,7 @@ void setup() {
   ogImg.endDraw();
 
   
-  menu = createGraphics(50,h_w);
+  menu = createGraphics(buttons,h_w);
   menu.beginDraw();
   menu.background(200,200,100);
   menu.endDraw();
@@ -88,36 +90,36 @@ void draw() {
   image(menu, h_w, 0);
   switch(option){
     case 1:
-      image(gsAVG, h_w+50, 0);
+      image(gsAVG, h_w+buttons, 0);
     break;
     case 2:
-      image(gsLuma, h_w+50, 0);
+      image(gsLuma, h_w+buttons, 0);
     break;
     case 3:   
       rgbHistogram();
-      image(rgbHist, h_w+50, 0);
-      image(rgbImg, h_w+50, h_w/2);
+      image(rgbHist, h_w+buttons, 0);
+      image(rgbImg, h_w+buttons, h_w/2);
     break;
     case 4:
-      image(edgeK, h_w+50, 0);
+      image(edgeK, h_w+buttons, 0);
     break;
     case 5:
-      image(sharpenK, h_w+50, 0);
+      image(sharpenK, h_w+buttons, 0);
     break;
     case 6:
-      image(gaussian3K, h_w+50, 0);
+      image(gaussian3K, h_w+buttons, 0);
     break;
     case 7:
-      image(embossK, h_w+50, 0);
+      image(embossK, h_w+buttons, 0);
     break;
     case 8:
-      image(gaussian5K, h_w+50, 0);
+      image(gaussian5K, h_w+buttons, 0);
     break;
     case 9:
-      image(unsharpK, h_w+50, 0);
+      image(unsharpK, h_w+buttons, 0);
     break;
     case 10:
-      image(video, h_w+50, 0);
+      image(video, h_w+buttons, 0);
     break;
     default:
     
@@ -126,12 +128,18 @@ void draw() {
 
   };
 
-  for(int i = 0; i<20;i++){
-    square(h_w,50*i,50);
+  textAlign(CENTER);
+  for(int i = 0; i<10;i++){
+    if(option-1==i){
+      fill(150,150,0);
+    }else{
+      fill(255);
+    }
+    square(h_w,buttons/2*i,buttons);
+    textSize(12);
+    fill(0);
+    text(menus[i],h_w+buttons/2,(buttons/2*(i+1))-22); 
   }
-  fill(255,255,0);
-  square(h_w,50*(option-1),50);
-  fill(255);
 }
 
 PImage gray(PImage picture,String mode){
@@ -329,7 +337,7 @@ PImage kernel_5x5(PImage picture,float[][] kernel){
 }
 
 void mouseClicked() {
-  if (mouseX > h_w && mouseX < h_w+50) {
+  if (mouseX > h_w && mouseX < h_w+buttons) {
     if(mouseY<h_w){
       option = mouseY/50+1;
     }
@@ -337,11 +345,11 @@ void mouseClicked() {
 }
 
 void mousePressed() {
-  if(mouseX > h_w+50 && mouseX < h_w*2+50 && mouseY > 0 && mouseY < h_w/2 && option==3){
-    if (mouseButton == LEFT && mouseX-h_w-50<end) {
-      start = mouseX-h_w-50;
-    } else if (mouseButton == RIGHT && mouseX-h_w-5>start) {
-      end = mouseX-h_w-50;
+  if(mouseX > h_w+buttons && mouseX < h_w*2+buttons && mouseY > 0 && mouseY < h_w/2 && option==3){
+    if (mouseButton == LEFT && mouseX-h_w-buttons<end) {
+      start = mouseX-h_w-buttons;
+    } else if (mouseButton == RIGHT && mouseX-h_w-buttons>start) {
+      end = mouseX-h_w-buttons;
     }
   }
 }
