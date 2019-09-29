@@ -4,7 +4,7 @@
 import processing.video.*;
 
 Movie myMovie;
-PImage ogImage;
+PImage[] imageList = new PImage[4];
 PGraphics ogImg, menu;
 PGraphics gsAVG, gsLuma;
 PGraphics rgbHist,rgbImg;
@@ -17,9 +17,9 @@ int start = 0;
 int end = h_w;
 int buttons = 100;
 int value=0;
+int selectedImage = 0;
 
 boolean update = true;
-
 String[] menus = {"AVG","Luma","Histogram","Edge 3x3","Sharpen 3x3","Gaussian 3x3","Emboss 4x4","Gaussian 5x5","Unsharpen 5x5","Video"};
 
 float[][] edgeDetection = {{-1,-1,-1}, 
@@ -55,33 +55,38 @@ float[][] unsharpMasking = {{ -1/256., -4/256., -6/256., -4/256., -1/256.},
                      
 void setup() {
   
- 
-  size(1100, 500);  //Background Size
+  size(1100, 500);  
   background(255);
   textAlign(CENTER);
   
+  //Original Image
   ogImg = createGraphics(h_w, h_w);
-  ogImage = loadImage("image.jpg");  //Load original image
-  //ogImage = loadImage("https" + "://processing.org/tutorials/color/imgs/hsb.png");
-  ogImage.resize(h_w, h_w); //Resize original image
+  imageList[0] = loadImage("image.jpg");
+  imageList[1] = loadImage("glados.jpg");
+  imageList[2] = loadImage("Scifi.jpg");
+  imageList[3] = loadImage("flowers.jpg");
+  imageList[0].resize(h_w, h_w);
+  imageList[1].resize(h_w, h_w);
+  imageList[2].resize(h_w, h_w);
+  imageList[3].resize(h_w, h_w);
+  
   ogImg.beginDraw();
-  ogImg.image(ogImage, 0, 0);  //Draw original image on his own canvas
+  ogImg.image(imageList[selectedImage], 0, 0); 
   ogImg.endDraw();
 
-  
+  //Menu Buttons
   menu = createGraphics(buttons,h_w);
   menu.beginDraw();
   menu.background(255);
   menu.endDraw();
   
-  
+  //B/W
   gsAVG = createGraphics(h_w,h_w);
   gsLuma = createGraphics(h_w, h_w);
-  
   rgbHist = createGraphics(h_w, h_w/2);
   rgbImg = createGraphics(h_w, h_w/2);
   
-  
+  //Kernels
   edgeK = createGraphics(h_w, h_w);
   sharpenK = createGraphics(h_w, h_w);
   gaussian3K = createGraphics(h_w, h_w);
@@ -91,10 +96,6 @@ void setup() {
   
   video = createGraphics(h_w, h_w);
   
-  gray_scale();
-  kernels();
-  
-  //Video
   myMovie = new Movie(this, "cuphead (SinVolumen).mp4");
   myMovie.loop();
   
@@ -105,10 +106,10 @@ void draw() {
   
   myMovie.pause();
   
+  image(ogImg, 0, 0);
+  //Only update buttons when changing option
   if(update){
-    
     myMovie.stop();
-    image(ogImg, 0, 0);
     for(int i = 0; i<10;i++){
       if(option-1==i){
         fill(150,150,255);
@@ -123,11 +124,18 @@ void draw() {
     update = false;
   }
   
+  //Select option
   switch(option){
     case 1:
+      gsAVG.beginDraw();
+      gsAVG.image(gray(imageList[selectedImage],"avg"), 0, 0);
+      gsAVG.endDraw();
       image(gsAVG, h_w+buttons, 0);
     break;
     case 2:
+      gsLuma.beginDraw();
+      gsLuma.image(gray(imageList[selectedImage],"luma"), 0, 0);
+      gsLuma.endDraw();
       image(gsLuma, h_w+buttons, 0);
     break;
     case 3:   
@@ -136,21 +144,39 @@ void draw() {
       image(rgbImg, h_w+buttons, h_w/2);
     break;
     case 4:
+      edgeK.beginDraw();
+      edgeK.image(kernel_3x3(imageList[selectedImage],edgeDetection), 0, 0);
+      edgeK.endDraw();
       image(edgeK, h_w+buttons, 0);
     break;
     case 5:
+      sharpenK.beginDraw();
+      sharpenK.image(kernel_3x3(imageList[selectedImage],sharpen), 0, 0);
+      sharpenK.endDraw();
       image(sharpenK, h_w+buttons, 0);
     break;
     case 6:
+      gaussian3K.beginDraw();
+      gaussian3K.image(kernel_3x3(imageList[selectedImage],gaussianBlur3x3), 0, 0);
+      gaussian3K.endDraw();
       image(gaussian3K, h_w+buttons, 0);
     break;
     case 7:
+      embossK.beginDraw();
+      embossK.image(kernel_4x4(imageList[selectedImage],emboss), 0, 0);
+      embossK.endDraw();
       image(embossK, h_w+buttons, 0);
     break;
     case 8:
+      gaussian5K.beginDraw();
+      gaussian5K.image(kernel_5x5(imageList[selectedImage],gaussianBlur5x5), 0, 0);
+      gaussian5K.endDraw();
       image(gaussian5K, h_w+buttons, 0);
     break;
     case 9:
+      unsharpK.beginDraw();
+      unsharpK.image(kernel_5x5(imageList[selectedImage],unsharpMasking), 0, 0);
+      unsharpK.endDraw();
       image(unsharpK, h_w+buttons, 0);
     break;
     case 10:
@@ -158,16 +184,13 @@ void draw() {
       image(video, h_w+buttons, 0, 525, 500);
     break;
     default:
-    
     break;
-    
-
   };
 }
 
 PImage gray(PImage picture,String mode){
-  PImage custom = picture.copy();
   
+  PImage custom = picture.copy();
   picture.loadPixels();
   for(int i=0;i<picture.width*picture.height;i++){
       float redVal = red(picture.pixels[i]);
@@ -184,22 +207,12 @@ PImage gray(PImage picture,String mode){
   return custom;
 }
 
-void gray_scale(){  
-  gsAVG.beginDraw();
-  gsAVG.image(gray(ogImage,"avg"), 0, 0);
-  gsAVG.endDraw();
-  
-  gsLuma.beginDraw();
-  gsLuma.image(gray(ogImage,"luma"), 0, 0);
-  gsLuma.endDraw();
-}
-
 void rgbHistogram(){
 
   int[] hist = new int[256];
   
-  PImage gray_image = gray(ogImage,"luma");
-  PImage highlight = gray(ogImage,"luma");
+  PImage gray_image = gray(imageList[selectedImage],"luma");
+  PImage highlight = gray(imageList[selectedImage],"luma");
   
   int x1 = int(map(start, 0, rgbHist.width, 0, 255));
   int x2 = int(map(end, 0, rgbHist.width, 0, 255));
@@ -230,8 +243,6 @@ void rgbHistogram(){
   rgbHist.line(end, rgbHist.height, end, 0);
   rgbHist.endDraw();
   
-
-  
   gray_image.resize(h_w/2,h_w/2);
   highlight.resize(h_w/2,h_w/2);
 
@@ -241,33 +252,6 @@ void rgbHistogram(){
   rgbImg.endDraw();
   
 }
-
-void kernels(){
-  edgeK.beginDraw();
-  edgeK.image(kernel_3x3(ogImage,edgeDetection), 0, 0);
-  edgeK.endDraw();
-  
-  sharpenK.beginDraw();
-  sharpenK.image(kernel_3x3(ogImage,sharpen), 0, 0);
-  sharpenK.endDraw();
-  
-  gaussian3K.beginDraw();
-  gaussian3K.image(kernel_3x3(ogImage,gaussianBlur3x3), 0, 0);
-  gaussian3K.endDraw();
-  
-  embossK.beginDraw();
-  embossK.image(kernel_4x4(ogImage,emboss), 0, 0);
-  embossK.endDraw();
-  
-  gaussian5K.beginDraw();
-  gaussian5K.image(kernel_5x5(ogImage,gaussianBlur5x5), 0, 0);
-  gaussian5K.endDraw();
-  
-  unsharpK.beginDraw();
-  unsharpK.image(kernel_5x5(ogImage,unsharpMasking), 0, 0);
-  unsharpK.endDraw();
-}
-
 
 PImage kernel_3x3(PImage picture,float[][] kernel){
 
@@ -393,12 +377,16 @@ void keyPressed() {
   if (keyCode == '0') {
     value=0;
   } else if (keyCode == '1') {
+    selectedImage=0;
     value=1;
   } else if (keyCode == '2') {
+    selectedImage=1;
     value=2;
   } else if (keyCode == '3') {
+    selectedImage=2;
     value=3;
   } else if (keyCode == '4') {
+    selectedImage=3;
     value=4;
   } else if (keyCode == '5') {
     value=5;
@@ -409,9 +397,13 @@ void keyPressed() {
   } else if (keyCode == '8') {
     value=8;
   } 
+  ogImg.beginDraw();
+  ogImg.image(imageList[selectedImage], 0, 0); 
+  ogImg.endDraw();
 }
 
 void mouseClicked() {
+  //Check if the click was in the menu zone
   if (mouseX > h_w && mouseX < h_w+buttons) {
     if(mouseY<h_w){
       option = mouseY/50+1;
@@ -421,6 +413,7 @@ void mouseClicked() {
 }
 
 void mousePressed() {
+  //Check if the clicks was in the histogram zone
   if(mouseX > h_w+buttons && mouseX < h_w*2+buttons && mouseY > 0 && mouseY < h_w/2 && option==3){
     if (mouseButton == LEFT && mouseX-h_w-buttons<end) {
       start = mouseX-h_w-buttons;
