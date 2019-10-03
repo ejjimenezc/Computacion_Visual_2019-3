@@ -1,60 +1,59 @@
 int illusion = 1;
+PGraphics illussion, help;
+PImage grayNeg;
+boolean start_01 = false;
+int start_time;
 
-void setup(){
-  size(600,600);
-  background(255,200,150);
+String helpText;
+
+void setup() {
+  size(500,600);
+  
+  illussion = createGraphics(500, 500);
+  help = createGraphics(500, 100);
+  grayNeg = loadImage("gray.jpg");
+  grayNeg.resize(500,500);
 }
+
 
 void draw(){
-
-    switch(illusion){
-      case 1:
-      break;
-      case 2:
-      break;
-      case 3:
-      break;
-      case 4:
-      break;
-      case 5:
-      break;
-      case 6:
-      break;
-      case 7:
-      break;
-      case 8:
-      break;
-      case 9:
-      break;
-      case 0:
-      break;
-      default:
-        illusion = 1;
-      break;
-    }
+  clear();
   
-}
-
-void keyPressed() {
-  if (keyCode == '0') {
-    illusion=0;
-  } else if (keyCode == '1') {
-    illusion=1;
-  } else if (keyCode == '2') {
-    illusion=2;
-  } else if (keyCode == '3') {
-    illusion=3;
-  } else if (keyCode == '4') {
-    illusion=4;
-  } else if (keyCode == '5') {
-    illusion=5;
-  } else if (keyCode == '6') {
-    illusion=6;
-  } else if (keyCode == '7') {
-    illusion=7;
-  } else if (keyCode == '8') {
-    illusion=8;
-  } else if (keyCode == '9') {
-    illusion=9;
-  } 
+  switch(illusion){
+    case 1:
+      color_illusion();
+    break;
+    case 2:
+      arc_illusion();
+    break;
+    case 3:
+    break;
+    case 4:
+    break;
+    case 5:
+    break;
+    case 6:
+    break;
+    case 7:
+    break;
+    case 8:
+    break;
+    case 9:
+    break;
+    case 0:
+    break;
+    default:
+      illusion = 1;
+    break;
+  }
+  
+  help.beginDraw();
+  help.clear();
+  help.background(100,150,100);
+  help.textSize(24);
+  fill(0);
+  help.text(helpText, 10, 30);
+  help.endDraw();
+  image(illussion, 0, 0);
+  image(help, 0, 500);
 }
