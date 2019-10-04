@@ -51,9 +51,9 @@ void draw(){
   help.beginDraw();
   help.clear();
   help.background(100,150,100);
-  help.textSize(24);
+  help.textSize(14);
   fill(0);
-  help.text(helpText, 10, 30);
+  help.text(helpText, 10, 20,480,300);
   help.endDraw();
   image(illusion, 0, 0);
   image(help, 0, 500);
