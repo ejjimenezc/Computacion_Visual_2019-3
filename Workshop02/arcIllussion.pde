@@ -13,11 +13,11 @@ void arc_illusion(){
   rule.endShape();
   
   
-  illussion.beginDraw();
-  illussion.clear();
-  illussion.background(255);
-  illussion.shape(rule, 200, 200);
-  illussion.endDraw();
+  illusion.beginDraw();
+  illusion.clear();
+  illusion.background(255);
+  illusion.shape(rule, 200, 200);
+  illusion.endDraw();
   
   
   helpText = "What arc is longer";

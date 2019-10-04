@@ -1,5 +1,5 @@
-int illusion = 1;
-PGraphics illussion, help;
+int illusion_number = 1;
+PGraphics illusion, help;
 PImage grayNeg;
 boolean start_01 = false;
 int start_time;
@@ -9,7 +9,7 @@ String helpText;
 void setup() {
   size(500,600);
   
-  illussion = createGraphics(500, 500);
+  illusion = createGraphics(500, 500);
   help = createGraphics(500, 100);
   grayNeg = loadImage("gray.jpg");
   grayNeg.resize(500,500);
@@ -19,7 +19,7 @@ void setup() {
 void draw(){
   clear();
   
-  switch(illusion){
+  switch(illusion_number){
     case 1:
       color_illusion();
     break;
@@ -27,6 +27,7 @@ void draw(){
       arc_illusion();
     break;
     case 3:
+      t_illusion();
     break;
     case 4:
     break;
@@ -43,7 +44,7 @@ void draw(){
     case 0:
     break;
     default:
-      illusion = 1;
+      illusion_number = 1;
     break;
   }
   
@@ -54,6 +55,6 @@ void draw(){
   fill(0);
   help.text(helpText, 10, 30);
   help.endDraw();
-  image(illussion, 0, 0);
+  image(illusion, 0, 0);
   image(help, 0, 500);
 }
