@@ -9,7 +9,7 @@ String helpText;
 void setup() {
   size(500,600,P3D);
   
-  illusion = createGraphics(500, 500);
+  illusion = createGraphics(500, 500, P3D);
   help = createGraphics(500, 100);
   grayNeg = loadImage("gray.jpg");
   grayNeg.resize(500,500);
@@ -42,6 +42,7 @@ void draw(){
     case 9:
     break;
     case 0:
+      necker();
     break;
     default:
       illusion_number = 1;
