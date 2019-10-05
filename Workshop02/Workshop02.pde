@@ -7,7 +7,7 @@ int start_time;
 String helpText;
 
 void setup() {
-  size(500,600);
+  size(500,600,P3D);
   
   illusion = createGraphics(500, 500);
   help = createGraphics(500, 100);
