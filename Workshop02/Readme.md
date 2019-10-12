@@ -26,7 +26,7 @@ Complete la tabla:
 |---------|-----------|------------|------------------------------------|-----------------------------|
 | BreathingSquare | Geométrica - Movimiento | ["Breathing Square" Illusion] (https://michaelbach.de/ot/mot-breathingSquare/index.html) | (No aplica) |                             |
 | EbbinghausIllusion | Paradójica - Interactividad | [Ebbinghaus Illusion] (https://michaelbach.de/ot/cog-Ebbinghaus/index.html) | Dar click en la pantalla para desaparecer los circulos azules |                             |
-| 3D Waves | Ambigua - Movimiento | [Sine Wave] (https://p5js.org/examples/math-sine-wave.html) | [Sine Wve (Processing)] https://processing.org/examples/sinewave.html |
+| 3D Waves | Ambigua - Movimiento | [Sine Wave] (https://p5js.org/examples/math-sine-wave.html) | (No aplica) |[Sine Wve (Processing)] https://processing.org/examples/sinewave.html |
 |         |           |            |                                    |                             |
 |         |           |            |                                    |                             |
 |         |           |            |                                    |                             |
