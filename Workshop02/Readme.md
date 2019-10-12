@@ -24,8 +24,8 @@ Complete la tabla:
 
 | Ilusión | Categoria | Referencia | Tipo de interactividad (si aplica) | URL código base (si aplica) |
 |---------|-----------|------------|------------------------------------|-----------------------------|
-| BreathingSquare | Geométrica - Movimiento | ["Breathing Square" Illusion] (https://michaelbach.de/ot/mot-breathingSquare/index.html) | (No aplica) |                             |
-| EbbinghausIllusion | Paradójica - Interactividad | [Ebbinghaus Illusion] (https://michaelbach.de/ot/cog-Ebbinghaus/index.html) | Dar click en la pantalla para desaparecer los circulos azules |                             |
+| BreathingSquare | Geométrica - Movimiento | ["Breathing Square" Illusion] (https://michaelbach.de/ot/mot-breathingSquare/index.html) | (No aplica) | (No aplica) |
+| EbbinghausIllusion | Paradójica - Interactividad | [Ebbinghaus Illusion] (https://michaelbach.de/ot/cog-Ebbinghaus/index.html) | Dar click en la pantalla para desaparecer los circulos azules | (No aplica) |
 | 3D Waves | Ambigua - Movimiento | [Sine Wave] (https://p5js.org/examples/math-sine-wave.html) | (No aplica) |[Sine Wve (Processing)] https://processing.org/examples/sinewave.html |
 |         |           |            |                                    |                             |
 |         |           |            |                                    |                             |
