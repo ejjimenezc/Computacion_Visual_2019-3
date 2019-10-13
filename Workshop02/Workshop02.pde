@@ -29,20 +29,6 @@ void draw(){
     case 3:
       t_illusion();
     break;
-    case 4:
-    break;
-    case 5:
-    break;
-    case 6:
-    break;
-    case 7:
-    break;
-    case 8:
-    break;
-    case 9:
-    break;
-    case 0:
-    break;
     default:
       illusion_number = 1;
     break;
