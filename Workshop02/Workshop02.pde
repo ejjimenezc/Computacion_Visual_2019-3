@@ -9,7 +9,7 @@ String helpText;
 void setup() {
   size(500,600,P3D);
   
-  illusion = createGraphics(500, 500, P3D);
+  illusion = createGraphics(500, 500);
   help = createGraphics(500, 100);
   grayNeg = loadImage("gray.jpg");
   grayNeg.resize(500,500);
