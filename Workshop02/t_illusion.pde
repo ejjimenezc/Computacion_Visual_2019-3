@@ -23,7 +23,7 @@ void t_illusion(){
   }
   
   illusion.endDraw();
-  helpText = "Change the length of the vertical line moving the mouse, "+
-             "drag the size until the vertical and horizontal are identical in length. "+
-             "Press Left Click to view the true size.";
+  helpText = "Cambia la longitud de la vertical con el mouse, "+
+             "cuando creas que tiene la misma longitud de la vertical "+
+             "haz click para ver el tamaño real.";
 }

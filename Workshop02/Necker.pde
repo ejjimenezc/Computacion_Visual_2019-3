@@ -78,5 +78,5 @@ void necker(){
   illusion.endDraw();
   
   
-  helpText = "Necker Cube";
+  helpText = "Necker Cube, ¿la cara mas oscura es el interior o el exterior de un cubo?";
 }

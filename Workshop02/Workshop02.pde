@@ -24,7 +24,7 @@ void draw(){
       color_illusion();
     break;
     case 2:
-      arc_illusion();
+      necker();
     break;
     case 3:
       t_illusion();
@@ -42,7 +42,6 @@ void draw(){
     case 9:
     break;
     case 0:
-      necker();
     break;
     default:
       illusion_number = 1;
