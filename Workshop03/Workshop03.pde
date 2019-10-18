@@ -82,8 +82,14 @@ void triangleRaster() {
   // here we convert v1 to illustrate the idea
   
   
-  int d = round(2*n);
-  println(n);
+  int d = round(pow(2,n));
+  float[][] vectors = { {node.location(v1).x(),node.location(v1).y()},
+                        {node.location(v2).x(),node.location(v2).y()},
+                        {node.location(v3).x(),node.location(v3).y()}};
+  
+  PVector  v_0 = new PVector(node.location(v1).x(),node.location(v1).y());
+  PVector  v_1 = new PVector(node.location(v2).x(),node.location(v2).y());
+  PVector  v_2 = new PVector(node.location(v2).x(),node.location(v3).y());
   
   push();
   noStroke();
@@ -91,12 +97,35 @@ void triangleRaster() {
   for(int x=-d;x<=d;x++){
     for(int y=-d;y<=d;y++){
       
-      float l1 = (node.location(v1).x()-node.location(v1).x());
-
-      square(x, y, 1);
+      float EP1 = (x-v0x)*(v1y-v0y)-(y-v0y)*(v1x-v0x);
+      float EP2 = (x-v1x)*(v2y-v1y)-(y-v1y)*(v2x-v1x);
+      float EP3 = (x-v2x)*(v0y-v2y)-(y-v2y)*(v0x-v2x);
+      
+      if(EP1>=0){
+        square(x, y, 1);
+      }
     };
   };
   pop();
+  
+  
+  if (debug) {
+    push();
+    noStroke();
+    fill(255, 0, 0);
+    square(round(node.location(v1).x()), round(node.location(v1).y()), 1);
+    pop();
+    push();
+    noStroke();
+    fill(0, 255, 0);
+    square(round(node.location(v2).x()), round(node.location(v2).y()), 1);
+    pop();
+    push();
+    noStroke();
+    fill(0, 0, 255);
+    square(round(node.location(v3).x()), round(node.location(v3).y()), 1);
+    pop();
+  }
 }
 
 void randomizeTriangle() {
