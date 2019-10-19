@@ -75,6 +75,10 @@ void draw() {
   pop();
 }
 
+float edge(PVector a, PVector b, float pX, float pY ){
+  return (pX-a.x)*(b.y-a.y)-(pY-a.y)*(b.x-a.x);
+}
+
 // Implement this function to rasterize the triangle.
 // Coordinates are given in the node system which has a dimension of 2^n
 void triangleRaster() {
@@ -86,10 +90,30 @@ void triangleRaster() {
   float[][] vectors = { {node.location(v1).x(),node.location(v1).y()},
                         {node.location(v2).x(),node.location(v2).y()},
                         {node.location(v3).x(),node.location(v3).y()}};
+  PVector[] v = new PVector[3];
+  for(int i = 0; i<3; i++){
+    int pos = 0;
+    for(int j = 0; j<3; j++){
+      if(i!=j){
+        if(vectors[i][0]>vectors[j][0]){
+          pos++;
+        }
+      }
+    }
+    v[pos]=new PVector(vectors[i][0],vectors[i][1]);
+  }
   
-  PVector  v_0 = new PVector(node.location(v1).x(),node.location(v1).y());
-  PVector  v_1 = new PVector(node.location(v2).x(),node.location(v2).y());
-  PVector  v_2 = new PVector(node.location(v2).x(),node.location(v3).y());
+  if(v[0].cross(v[1]).z<0){
+    PVector tmp = v[1];
+    v[1]=v[2];
+    v[2]=tmp;
+  }  
+  
+  //PVector  v_0 = new PVector(node.location(v1).x(),node.location(v1).y());
+  //PVector  v_1 = new PVector(node.location(v2).x(),node.location(v2).y());
+  //PVector  v_2 = new PVector(node.location(v2).x(),node.location(v3).y());
+  
+  println(v[0].cross(v[1]));
   
   push();
   noStroke();
@@ -97,9 +121,7 @@ void triangleRaster() {
   for(int x=-d;x<=d;x++){
     for(int y=-d;y<=d;y++){
       
-      float EP1 = (x-v0x)*(v1y-v0y)-(y-v0y)*(v1x-v0x);
-      float EP2 = (x-v1x)*(v2y-v1y)-(y-v1y)*(v2x-v1x);
-      float EP3 = (x-v2x)*(v0y-v2y)-(y-v2y)*(v0x-v2x);
+      float EP1 = edge(v[0],v[1],x,y);
       
       if(EP1>=0){
         square(x, y, 1);
@@ -113,17 +135,17 @@ void triangleRaster() {
     push();
     noStroke();
     fill(255, 0, 0);
-    square(round(node.location(v1).x()), round(node.location(v1).y()), 1);
+    square(round(v[0].x), round(v[0].y), 1);
     pop();
     push();
     noStroke();
     fill(0, 255, 0);
-    square(round(node.location(v2).x()), round(node.location(v2).y()), 1);
+    square(round(v[1].x), round(v[1].y), 1);
     pop();
     push();
     noStroke();
     fill(0, 0, 255);
-    square(round(node.location(v3).x()), round(node.location(v3).y()), 1);
+    square(round(v[2].x), round(v[2].y), 1);
     pop();
   }
 }
