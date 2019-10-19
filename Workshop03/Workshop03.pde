@@ -1,4 +1,3 @@
-import nub.timing.*;
 import nub.primitives.*;
 import nub.core.*;
 import nub.processing.*;
@@ -17,12 +16,13 @@ int n = 4;
 boolean triangleHint = true;
 boolean gridHint = true;
 boolean debug = true;
+boolean shadeHint = false;
 
 // 3. Use FX2D, JAVA2D, P2D or P3D
 String renderer = P2D;
 
 // 4. Window dimension
-int dim = 9;
+int dim = 10;
 
 void settings() {
   size(int(pow(2, dim)), int(pow(2, dim)), renderer);
@@ -37,7 +37,7 @@ void setup() {
   scene.fit(1);
 
   // not really needed here but create a spinning task
-  // just to illustrate some nub.timing features. For
+  // just to illustrate some nub timing features. For
   // example, to see how 3D spinning from the horizon
   // (no bias from above nor from below) induces movement
   // on the node instance (the one used to represent
@@ -46,14 +46,13 @@ void setup() {
   // Press ' ' to play it
   // Press 'y' to change the spinning axes defined in the
   // world system.
-  spinningTask = new TimingTask() {
+  spinningTask = new TimingTask(scene) {
     @Override
     public void execute() {
       scene.eye().orbit(scene.is2D() ? new Vector(0, 0, 1) :
         yDirection ? new Vector(0, 1, 0) : new Vector(1, 0, 0), PI / 100);
     }
   };
-  scene.registerTask(spinningTask);
 
   node = new Node();
   node.setScaling(width/pow(2, n));
@@ -153,15 +152,39 @@ void randomizeTriangle() {
 
 void drawTriangleHint() {
   push();
-  noFill();
-  strokeWeight(2);
-  stroke(255, 0, 0);
-  triangle(v1.x(), v1.y(), v2.x(), v2.y(), v3.x(), v3.y());
+
+  if(shadeHint)
+    noStroke();
+  else {
+    strokeWeight(2);
+    noFill();
+  }
+  beginShape(TRIANGLES);
+  if(shadeHint)
+    fill(255, 0, 0);
+  else
+    stroke(255, 0, 0);
+  vertex(v1.x(), v1.y());
+  if(shadeHint)
+    fill(0, 255, 0);
+  else
+    stroke(0, 255, 0);
+  vertex(v2.x(), v2.y());
+  if(shadeHint)
+    fill(0, 0, 255);
+  else
+    stroke(0, 0, 255);
+  vertex(v3.x(), v3.y());
+  endShape();
+
   strokeWeight(5);
-  stroke(0, 255, 255);
+  stroke(255, 0, 0);
   point(v1.x(), v1.y());
+  stroke(0, 255, 0);
   point(v2.x(), v2.y());
+  stroke(0, 0, 255);
   point(v3.x(), v3.y());
+
   pop();
 }
 
@@ -170,6 +193,8 @@ void keyPressed() {
     gridHint = !gridHint;
   if (key == 't')
     triangleHint = !triangleHint;
+  if (key == 's')
+    shadeHint = !shadeHint;
   if (key == 'd')
     debug = !debug;
   if (key == '+') {
@@ -186,7 +211,7 @@ void keyPressed() {
     if (spinningTask.isActive())
       spinningTask.stop();
     else
-      spinningTask.run(20);
+      spinningTask.run();
   if (key == 'y')
     yDirection = !yDirection;
 }
