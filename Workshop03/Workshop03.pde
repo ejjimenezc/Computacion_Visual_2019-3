@@ -87,33 +87,26 @@ void triangleRaster() {
   
   
   int d = round(pow(2,n));
-  float[][] vectors = { {node.location(v1).x(),node.location(v1).y()},
-                        {node.location(v2).x(),node.location(v2).y()},
-                        {node.location(v3).x(),node.location(v3).y()}};
-  PVector[] v = new PVector[3];
-  for(int i = 0; i<3; i++){
-    int pos = 0;
-    for(int j = 0; j<3; j++){
-      if(i!=j){
-        if(vectors[i][0]>vectors[j][0]){
-          pos++;
-        }
+                        
+
+  PVector[] v = { new PVector(node.location(v1).x(),node.location(v1).y()),
+                  new PVector(node.location(v2).x(),node.location(v2).y()),
+                  new PVector(node.location(v3).x(),node.location(v3).y())};
+      
+  for(int i = 3; i>=0;i--){
+    PVector tmp;
+    for(int j = 0; j<i-1; j++){
+      if(v[j].y>v[j+1].y){
+        tmp = v[j];
+        v[j] = v[j+1];
+        v[j+1] = tmp;
       }
     }
-    v[pos]=new PVector(vectors[i][0],vectors[i][1]);
+    
   }
   
-  if(v[0].cross(v[1]).z<0){
-    PVector tmp = v[1];
-    v[1]=v[2];
-    v[2]=tmp;
-  }  
-  
-  //PVector  v_0 = new PVector(node.location(v1).x(),node.location(v1).y());
-  //PVector  v_1 = new PVector(node.location(v2).x(),node.location(v2).y());
-  //PVector  v_2 = new PVector(node.location(v2).x(),node.location(v3).y());
-  
-  println(v[0].cross(v[1]));
+  println(v[0].cross(v[1]).z,v[0].cross(v[2]).z);
+    
   
   push();
   noStroke();
@@ -122,8 +115,8 @@ void triangleRaster() {
     for(int y=-d;y<=d;y++){
       
       float EP1 = edge(v[0],v[1],x,y);
-      
-      if(EP1>=0){
+ 
+      if(EP1>0){
         square(x, y, 1);
       }
     };
