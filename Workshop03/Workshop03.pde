@@ -22,7 +22,7 @@ boolean shadeHint = false;
 String renderer = P2D;
 
 // 4. Window dimension
-int dim = 10;
+int dim = 9;
 
 void settings() {
   size(int(pow(2, dim)), int(pow(2, dim)), renderer);
@@ -92,30 +92,20 @@ void triangleRaster() {
                   new PVector(node.location(v2).x(),node.location(v2).y()),
                   new PVector(node.location(v3).x(),node.location(v3).y())};
       
-  for(int i = 3; i>=0;i--){
-    PVector tmp;
-    for(int j = 0; j<i-1; j++){
-      if(v[j].y>v[j+1].y){
-        tmp = v[j];
-        v[j] = v[j+1];
-        v[j+1] = tmp;
-      }
-    }
+  float orientation =   (v[1].y-v[0].y)*(v[2].x-v[1].x)-
+                (v[1].x-v[0].x)*(v[2].y - v[1].y);
     
-  }
-  
-  println(v[0].cross(v[1]).z,v[0].cross(v[2]).z);
-    
-  
   push();
   noStroke();
   fill(255, 255, 0, 150);
   for(int x=-d;x<=d;x++){
     for(int y=-d;y<=d;y++){
       
-      float EP1 = edge(v[0],v[1],x,y);
+      float EP1 = edge(v[0],v[1],x,y)*orientation;
+      float EP2 = edge(v[1],v[2],x,y)*orientation;
+      float EP3 = edge(v[2],v[0],x,y)*orientation;
  
-      if(EP1>0){
+      if(EP1>=0 && EP2>=0 && EP3>=0){
         square(x, y, 1);
       }
     };

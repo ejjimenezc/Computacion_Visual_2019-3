@@ -6,13 +6,13 @@
       0,
       1
     ],
-    "magnitude": 1,
+    "magnitude": 1.349143624305725,
     "position": [
       0,
       0,
       0
     ]
   },
-  "radius": 256,
+  "radius": 512,
   "type": "TWO_D"
 }
