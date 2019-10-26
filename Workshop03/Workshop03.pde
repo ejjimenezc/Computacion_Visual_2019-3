@@ -91,20 +91,19 @@ void triangleRaster() {
   PVector[] v = { new PVector(node.location(v1).x(),node.location(v1).y()),
                   new PVector(node.location(v2).x(),node.location(v2).y()),
                   new PVector(node.location(v3).x(),node.location(v3).y())};
-      
-  float orientation =   (v[1].y-v[0].y)*(v[2].x-v[1].x)-
-                (v[1].x-v[0].x)*(v[2].y - v[1].y);
-    
+  
   push();
   noStroke();
   fill(255, 255, 0, 150);
   for(int x=-d;x<=d;x++){
     for(int y=-d;y<=d;y++){
       
-      float EP1 = edge(v[0],v[1],x,y)*orientation;
-      float EP2 = edge(v[1],v[2],x,y)*orientation;
-      float EP3 = edge(v[2],v[0],x,y)*orientation;
- 
+      
+      
+      float EP1 = edge(v[0],v[1],x,y)/edge(v[0],v[1],v[2].x,v[2].y);
+      float EP2 = edge(v[1],v[2],x,y)/edge(v[1],v[2],v[0].x,v[0].y);
+      float EP3 = edge(v[2],v[0],x,y)/edge(v[2],v[0],v[1].x,v[1].y);
+      
       if(EP1>=0 && EP2>=0 && EP3>=0){
         square(x, y, 1);
       }
