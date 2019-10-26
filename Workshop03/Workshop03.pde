@@ -94,41 +94,31 @@ void triangleRaster() {
   
   push();
   noStroke();
-  fill(255, 255, 0, 150);
   for(int x=-d;x<=d;x++){
     for(int y=-d;y<=d;y++){
       
       
       
-      float EP1 = edge(v[0],v[1],x,y)/edge(v[0],v[1],v[2].x,v[2].y);
-      float EP2 = edge(v[1],v[2],x,y)/edge(v[1],v[2],v[0].x,v[0].y);
-      float EP3 = edge(v[2],v[0],x,y)/edge(v[2],v[0],v[1].x,v[1].y);
+      float l0 = edge(v[0],v[1],x,y)/edge(v[0],v[1],v[2].x,v[2].y);
+      float l1 = edge(v[1],v[2],x,y)/edge(v[1],v[2],v[0].x,v[0].y);
+      float l2 = edge(v[2],v[0],x,y)/edge(v[2],v[0],v[1].x,v[1].y);
       
-      if(EP1>=0 && EP2>=0 && EP3>=0){
+      float r = l1*255;
+      float g = l2*255;
+      float b = l0*255;
+      
+      
+      fill(r, g, b);
+      
+      if(l0>=0 && l1>=0 && l2>=0){
+
         square(x, y, 1);
       }
     };
   };
   pop();
   
-  
-  if (debug) {
-    push();
-    noStroke();
-    fill(255, 0, 0);
-    square(round(v[0].x), round(v[0].y), 1);
-    pop();
-    push();
-    noStroke();
-    fill(0, 255, 0);
-    square(round(v[1].x), round(v[1].y), 1);
-    pop();
-    push();
-    noStroke();
-    fill(0, 0, 255);
-    square(round(v[2].x), round(v[2].y), 1);
-    pop();
-  }
+ 
 }
 
 void randomizeTriangle() {
