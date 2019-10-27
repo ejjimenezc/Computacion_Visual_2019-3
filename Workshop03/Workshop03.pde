@@ -11,12 +11,15 @@ TimingTask spinningTask;
 boolean yDirection;
 // scaling is a power of 2
 int n = 4;
+// Grid antialiasing
+int antialiasing_div = 4;
 
 // 2. Hints
 boolean triangleHint = true;
 boolean gridHint = true;
 boolean debug = true;
 boolean shadeHint = false;
+boolean antialiasingEffect = false;
 
 // 3. Use FX2D, JAVA2D, P2D or P3D
 String renderer = P2D;
@@ -83,10 +86,7 @@ float edge(PVector a, PVector b, float pX, float pY ){
 void triangleRaster() {
   // node.location converts points from world to node
   // here we convert v1 to illustrate the idea
-  
-  
   int d = round(pow(2,n));
-                        
 
   PVector[] v = { new PVector(node.location(v1).x(),node.location(v1).y()),
                   new PVector(node.location(v2).x(),node.location(v2).y()),
@@ -96,10 +96,28 @@ void triangleRaster() {
   noStroke();
   for(int x=-d;x<=d;x++){
     for(int y=-d;y<=d;y++){
+      PVector avgColor = new PVector(255, 255, 255);
+      float alpha = 255;
+      float W1 = edge(v[0],v[1],x,y)/edge(v[0],v[1],v[2].x,v[2].y);
+      float W2 = edge(v[1],v[2],x,y)/edge(v[1],v[2],v[0].x,v[0].y);
+      float W3 = edge(v[2],v[0],x,y)/edge(v[2],v[0],v[1].x,v[1].y);
+      float r = W1*255;
+      float g = W2*255;
+      float b = W3*255;
+      float avgP = r+g+b/3;
+      if (W1 >= 0 && W2 >= 0 && W3 >= 0) {
+        avgColor.set(avgColor.x - W1*avgP, avgColor.y - W2*avgP, avgColor.z - W3*avgP);
+      }
+      else{
+        alpha -= avgP;
+      }
+      if(avgColor == new PVector(255, 255, 255)) {
+        noFill();
+      } else {
+        fill(round(avgColor.x), round(avgColor.y), round(avgColor.z), alpha);
+      }
       
-      
-      
-      float l0 = edge(v[0],v[1],x,y)/edge(v[0],v[1],v[2].x,v[2].y);
+      /*float l0 = edge(v[0],v[1],x,y)/edge(v[0],v[1],v[2].x,v[2].y);
       float l1 = edge(v[1],v[2],x,y)/edge(v[1],v[2],v[0].x,v[0].y);
       float l2 = edge(v[2],v[0],x,y)/edge(v[2],v[0],v[1].x,v[1].y);
       
@@ -107,11 +125,8 @@ void triangleRaster() {
       float g = l2*255;
       float b = l0*255;
       
-      
-      fill(r, g, b);
-      
-      if(l0>=0 && l1>=0 && l2>=0){
-
+      fill(r, g, b);*/
+      if(W1>=0 && W2>=0 && W3>=0){
         square(x, y, 1);
       }
     };
