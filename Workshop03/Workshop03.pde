@@ -86,6 +86,8 @@ void triangleRaster() {
   
   
   int d = round(pow(2,n));
+  int factor = 2;
+  int aa = round(pow(2,factor));
                         
 
   PVector[] v = { new PVector(node.location(v1).x(),node.location(v1).y()),
@@ -97,23 +99,38 @@ void triangleRaster() {
   for(int x=-d;x<=d;x++){
     for(int y=-d;y<=d;y++){
       
+      float values = 0;
+      
+      for(int a = 0;a<aa;a++){
+        for(int b = 0;b<aa;b++){
+          
+          float w0 = edge(v[0],v[1],x+a,y+b)/edge(v[0],v[1],v[2].x,v[2].y);
+          float w1 = edge(v[1],v[2],x+a,y+b)/edge(v[1],v[2],v[0].x,v[0].y);
+          float w2 = edge(v[2],v[0],x+a,y+b)/edge(v[2],v[0],v[1].x,v[1].y);
+          
+          if(w0>=0 && w1>=0 && w2>=0){
+            values++;
+          }
+          
+        }
+      }
       
       
       float l0 = edge(v[0],v[1],x,y)/edge(v[0],v[1],v[2].x,v[2].y);
       float l1 = edge(v[1],v[2],x,y)/edge(v[1],v[2],v[0].x,v[0].y);
       float l2 = edge(v[2],v[0],x,y)/edge(v[2],v[0],v[1].x,v[1].y);
+
       
       float r = l1*255;
       float g = l2*255;
       float b = l0*255;
       
+      float translucent = 255*(values/aa);
       
-      fill(r, g, b);
       
-      if(l0>=0 && l1>=0 && l2>=0){
-
-        square(x, y, 1);
-      }
+      fill(r,g,b, translucent);
+      
+      square(x, y, 1);
     };
   };
   pop();
