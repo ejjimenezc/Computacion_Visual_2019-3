@@ -17,7 +17,7 @@ boolean triangleHint = true;
 boolean gridHint = true;
 boolean debug = true;
 boolean shadeHint = false;
-
+boolean toggle_aa = true;
 // 3. Use FX2D, JAVA2D, P2D or P3D
 String renderer = P2D;
 
@@ -86,8 +86,7 @@ void triangleRaster() {
   
   
   int d = round(pow(2,n));
-  int factor = 2;
-  int aa = round(pow(2,factor));
+  float aa = 4;
                         
 
   PVector[] v = { new PVector(node.location(v1).x(),node.location(v1).y()),
@@ -96,46 +95,45 @@ void triangleRaster() {
   
   push();
   noStroke();
+  
   for(int x=-d;x<=d;x++){
     for(int y=-d;y<=d;y++){
-      
-
-      
       
       float l0 = edge(v[0],v[1],x,y)/edge(v[0],v[1],v[2].x,v[2].y);
       float l1 = edge(v[1],v[2],x,y)/edge(v[1],v[2],v[0].x,v[0].y);
       float l2 = edge(v[2],v[0],x,y)/edge(v[2],v[0],v[1].x,v[1].y);
 
-      
       float red = l1*255;
       float green = l2*255;
       float blue = l0*255;
-      
-      //if(l0>=0 && l1>=0 && l2>=0){
-        
-      float values = 0;
-      
-      for(int a = 1;a<=aa;a++){
-        for(int b = 1;b<=aa;b++){
-          
-          float w0 = edge(v[0],v[1],x+a/aa,y+b/aa)/edge(v[0],v[1],v[2].x,v[2].y);
-          float w1 = edge(v[1],v[2],x+a/aa,y+b/aa)/edge(v[1],v[2],v[0].x,v[0].y);
-          float w2 = edge(v[2],v[0],x+a/aa,y+b/aa)/edge(v[2],v[0],v[1].x,v[1].y);
-          
-          if(w0>=0 && w1>=0 && w2>=0){
-            values++;
-          }
-          
+      if(!toggle_aa){
+        if(l0>=0 && l1>=0 && l2>=0){
+          fill(red,green,blue); 
+          square(x, y, 1);
         }
       }
-      
-      
-      float translucent = 255*(values/aa);
-      
-      fill(red,green,blue, translucent);
+      else{
         
+        float values = 0;
+        for(int a = 0;a<aa;a++){
+          for(int b = 0;b<aa;b++){
+            
+            //println(x,y,a/aa,b/aa);
+            
+            float w0 = edge(v[0],v[1],x+a/aa,y+b/aa)/edge(v[0],v[1],v[2].x,v[2].y);
+            float w1 = edge(v[1],v[2],x+a/aa,y+b/aa)/edge(v[1],v[2],v[0].x,v[0].y);
+            float w2 = edge(v[2],v[0],x+a/aa,y+b/aa)/edge(v[2],v[0],v[1].x,v[1].y);
+            
+            if(w0>=0 && w1>=0 && w2>=0){
+              values++;
+            }
+          }
+        }
+        float translucent = 255*(values/aa);
+        fill(red,green,blue, translucent); 
         square(x, y, 1);
-      //}
+      }  
+      
     };
   };
   pop();
@@ -215,4 +213,9 @@ void keyPressed() {
       spinningTask.run();
   if (key == 'y')
     yDirection = !yDirection;
+
+  if (key == 'a'){
+    if(toggle_aa){toggle_aa=false;}
+    else{toggle_aa=true;}
+  }
 }
