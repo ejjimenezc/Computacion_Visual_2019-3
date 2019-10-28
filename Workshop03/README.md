@@ -26,12 +26,13 @@ Complete la tabla:
 | Integrante | github nick |
 |------------|-------------|
 |Edwin Javier Jimenez Casares|ejjimenezc|
-|Juan Sebastian Alcina|  |
+|Juan Sebastian Alcina|jsalcinar|
 
 ## Discusión
 
 Describa los resultados obtenidos. En el caso de anti-aliasing describir las técnicas exploradas, citando las referencias.
 
+Para la implementación del anti-aliasing se utilizó el método descrito en la página sugerida por el profesor [Scratch a Pixel] (https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/rasterization-practical-implementation). En esta página se explica como este efecto consiste en tomar una sección del borde de la figura y dividir cada pixel en varios pixeles más pequeños a los cuales se les realiza una revisión del color. Posteriormente se toma el promedio de colores y se aplican estos cambios al pixel original. Esto es lo que genera el efecto de suavizado.
 
 ## Referencias
 
